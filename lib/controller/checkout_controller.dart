@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mechine_test/models/cart_models.dart';
 import 'package:mechine_test/models/order_models.dart';
+import 'package:mechine_test/models/product_models.dart';
 import 'package:mechine_test/roots/approot.dart';
 import 'package:mechine_test/service/api_service.dart';
 import 'package:mechine_test/service/storage_service.dart';
@@ -10,13 +12,22 @@ class CheckoutController extends GetxController {
   final nameController = TextEditingController();
   final phoneController = TextEditingController();
   final addressController = TextEditingController();
-
   final isLoading = false.obs;
+
+  Product? buyNowProduct;
+  final buyNowQuantity = 1.obs;
+
+  late final CartController _cartController;
 
   @override
   void onInit() {
     super.onInit();
+    _cartController = Get.find<CartController>();
     _loadUserData();
+
+    if (Get.arguments != null && Get.arguments is Product) {
+      buyNowProduct = Get.arguments as Product;
+    }
   }
 
   void _loadUserData() {
@@ -25,6 +36,48 @@ class CheckoutController extends GetxController {
       nameController.text = user.name;
       phoneController.text = user.phone ?? '';
       addressController.text = user.address ?? '';
+    }
+  }
+
+  bool get isBuyNowCheckout => buyNowProduct != null;
+
+  List<CartItem> get checkoutItems {
+    if (isBuyNowCheckout) {
+      return [
+        CartItem(product: buyNowProduct!, quantity: buyNowQuantity.value),
+      ];
+    } else {
+      return _cartController.cartItems;
+    }
+  }
+
+  double get subtotal {
+    if (isBuyNowCheckout) {
+      return buyNowProduct!.price * buyNowQuantity.value;
+    } else {
+      return _cartController.subtotal;
+    }
+  }
+
+  double get shippingFee {
+    if (isBuyNowCheckout) {
+      return 1.3;
+    } else {
+      return _cartController.shippingFee;
+    }
+  }
+
+  double get total {
+    return subtotal + shippingFee;
+  }
+
+  void incrementBuyNowQuantity() {
+    buyNowQuantity.value++;
+  }
+
+  void decrementBuyNowQuantity() {
+    if (buyNowQuantity.value > 1) {
+      buyNowQuantity.value--;
     }
   }
 
@@ -47,17 +100,13 @@ class CheckoutController extends GetxController {
     try {
       isLoading.value = true;
 
-      final cartController = Get.find<CartController>();
       final user = AuthService.getCurrentUser();
 
       final order = Order(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         userId: user?.id ?? '',
-        items: cartController.cartItems,
-        totalAmount: cartController.cartItems.fold(
-          0,
-          (sum, item) => sum + item.product.price * item.quantity,
-        ),
+        items: checkoutItems,
+        totalAmount: subtotal,
         status: 'Pending',
         deliveryAddress: addressController.text.trim(),
         customerName: nameController.text.trim(),
@@ -66,7 +115,10 @@ class CheckoutController extends GetxController {
       );
 
       await StorageService.saveOrder(order);
-      cartController.clearCart();
+
+      if (!isBuyNowCheckout) {
+        _cartController.clearCart();
+      }
 
       Get.snackbar(
         'Success',

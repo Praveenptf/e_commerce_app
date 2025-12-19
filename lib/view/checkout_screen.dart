@@ -3,15 +3,11 @@ import 'package:get/get.dart';
 import 'package:mechine_test/app_theme/appcolor.dart';
 import 'package:mechine_test/controller/checkout_controller.dart';
 
-import '../controller/cart_controller.dart';
-
 class CheckoutPage extends GetView<CheckoutController> {
   const CheckoutPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final cartController = Get.find<CartController>();
-
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -23,7 +19,114 @@ class CheckoutPage extends GetView<CheckoutController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Delivery Address
+            if (controller.isBuyNowCheckout)
+              Container(
+                margin: const EdgeInsets.only(bottom: 16),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Order Items',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Obx(
+                      () => Row(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.network(
+                              controller.buyNowProduct!.image,
+                              width: 60,
+                              height: 60,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Container(
+                                    width: 60,
+                                    height: 60,
+                                    color: AppColors.grey.withOpacity(0.3),
+                                    child: const Icon(Icons.image),
+                                  ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  controller.buyNowProduct!.title,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  '₹${controller.buyNowProduct!.price.toStringAsFixed(0)}',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          // Quantity Controls
+                          Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(color: AppColors.grey),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.remove, size: 18),
+                                  onPressed: controller.decrementBuyNowQuantity,
+                                  padding: const EdgeInsets.all(4),
+                                  constraints: const BoxConstraints(
+                                    minWidth: 32,
+                                    minHeight: 32,
+                                  ),
+                                ),
+                                Text(
+                                  '${controller.buyNowQuantity.value}',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.add, size: 18),
+                                  onPressed: controller.incrementBuyNowQuantity,
+                                  padding: const EdgeInsets.all(4),
+                                  constraints: const BoxConstraints(
+                                    minWidth: 32,
+                                    minHeight: 32,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -40,27 +143,48 @@ class CheckoutPage extends GetView<CheckoutController> {
                   const SizedBox(height: 16),
                   TextField(
                     controller: controller.nameController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Full Name',
                       hintText: 'Enter your name',
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: AppColors.grey,
+                          width: 1.2,
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 16),
                   TextField(
                     controller: controller.phoneController,
                     keyboardType: TextInputType.phone,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Phone Number',
                       hintText: 'Enter your phone',
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: AppColors.grey,
+                          width: 1.2,
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 16),
                   TextField(
                     controller: controller.addressController,
                     maxLines: 3,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Address',
                       hintText: 'Enter delivery address',
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: AppColors.grey,
+                          width: 1.2,
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -69,7 +193,6 @@ class CheckoutPage extends GetView<CheckoutController> {
 
             const SizedBox(height: 16),
 
-            // Order Summary
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -85,12 +208,9 @@ class CheckoutPage extends GetView<CheckoutController> {
                   ),
                   const SizedBox(height: 16),
                   Obx(() {
-                    final subtotal = cartController.cartItems.fold<double>(
-                      0,
-                      (sum, item) => sum + item.totalPrice,
-                    );
-                    final delivery = 40.0;
-                    final total = subtotal + delivery;
+                    final subtotal = controller.subtotal;
+                    final delivery = controller.shippingFee;
+                    final total = controller.total;
 
                     return Column(
                       children: [

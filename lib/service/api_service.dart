@@ -5,14 +5,12 @@ import 'package:mechine_test/models/user_models.dart';
 import 'package:mechine_test/service/storage_service.dart';
 
 class AuthService {
-  // Signup
   static Future<Map<String, dynamic>> signup({
     required String name,
     required String email,
     required String password,
   }) async {
     try {
-      // Register user (password will be hashed in StorageService)
       final success = await StorageService.registerUser(name, email, password);
 
       if (!success) {
@@ -31,13 +29,11 @@ class AuthService {
     }
   }
 
-  // Login
   static Future<Map<String, dynamic>> login({
     required String email,
     required String password,
   }) async {
     try {
-      // Check if user exists
       final user = StorageService.getUserByEmail(email);
 
       if (user == null) {
@@ -47,15 +43,12 @@ class AuthService {
         };
       }
 
-      // Verify password (will be hashed and compared in StorageService)
       if (!StorageService.checkPassword(email, password)) {
         return {'success': false, 'message': 'Incorrect password'};
       }
 
-      // Update last login time
       await StorageService.updateUserLoginTime(email);
 
-      // Save current user
       final updatedUser = StorageService.getUserByEmail(email);
       if (updatedUser != null) {
         await StorageService.saveUser(updatedUser);
@@ -71,22 +64,18 @@ class AuthService {
     }
   }
 
-  // Logout
   static Future<void> logout() async {
     await StorageService.logout();
   }
 
-  // Get current user
   static User? getCurrentUser() {
     return StorageService.getCurrentUser();
   }
 
-  // Check if logged in
   static bool isLoggedIn() {
     return StorageService.isLoggedIn();
   }
 
-  // Update user profile
   static Future<Map<String, dynamic>> updateProfile({
     required String name,
     String? phone,
@@ -124,7 +113,6 @@ class AuthService {
 class ApiService {
   static const String baseUrl = 'https://fakestoreapi.com';
 
-  // Fetch all products
   static Future<List<Product>> getProducts() async {
     try {
       final response = await http.get(Uri.parse('$baseUrl/products'));
@@ -141,7 +129,6 @@ class ApiService {
     }
   }
 
-  // Fetch all categories
   static Future<List<String>> getCategories() async {
     try {
       final response = await http.get(
@@ -160,7 +147,6 @@ class ApiService {
     }
   }
 
-  // Fetch products by category
   static Future<List<Product>> getProductsByCategory(String category) async {
     try {
       final response = await http.get(
@@ -179,7 +165,6 @@ class ApiService {
     }
   }
 
-  // Fetch single product by ID
   static Future<Product?> getProductById(int id) async {
     try {
       final response = await http.get(Uri.parse('$baseUrl/products/$id'));

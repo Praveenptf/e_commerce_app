@@ -37,19 +37,28 @@ class HomePage extends GetView<HomeController> {
                   ),
                   Stack(
                     children: [
-                      IconButton(
-                        icon: const Icon(
-                          Icons.shopping_cart,
-                          color: Colors.white,
+                      Container(
+                        width: 35,
+                        height: 35,
+                        decoration: BoxDecoration(
+                          color: AppColors.white,
+                          shape: BoxShape.circle,
                         ),
-                        onPressed: () => Get.toNamed(AppRoutes.cart),
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.shopping_cart,
+                            color: Colors.black,
+                            size: 20,
+                          ),
+                          onPressed: () => Get.toNamed(AppRoutes.cart),
+                        ),
                       ),
                       Obx(() {
                         final count = cartController.cartItems.length;
                         if (count == 0) return const SizedBox();
                         return Positioned(
-                          right: 8,
-                          top: 8,
+                          right: 5,
+                          top: 2,
                           child: Container(
                             padding: const EdgeInsets.all(4),
                             decoration: const BoxDecoration(
@@ -57,8 +66,8 @@ class HomePage extends GetView<HomeController> {
                               shape: BoxShape.circle,
                             ),
                             constraints: const BoxConstraints(
-                              minWidth: 16,
-                              minHeight: 16,
+                              minWidth: 14,
+                              minHeight: 14,
                             ),
                             child: Text(
                               count.toString(),
@@ -106,6 +115,7 @@ class HomePage extends GetView<HomeController> {
           ],
         ),
         toolbarHeight: 120,
+        automaticallyImplyLeading: false,
       ),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -119,15 +129,12 @@ class HomePage extends GetView<HomeController> {
               _buildBannerSection(),
               const SizedBox(height: 24),
 
-              // Limited Time Offer Countdown
               _buildCountdownSection(),
 
               const SizedBox(height: 24),
 
-              // Categories
               _buildCategoriesSection(),
 
-              // Popular Products
               _buildPopularSection(),
 
               const SizedBox(height: 40),
@@ -135,7 +142,6 @@ class HomePage extends GetView<HomeController> {
           ),
         ),
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
 
@@ -296,7 +302,7 @@ class HomePage extends GetView<HomeController> {
               child: Icon(
                 icons[category] ?? Icons.category,
                 size: 35,
-                color: AppColors.primary,
+                color: Colors.blue,
               ),
             ),
             const SizedBox(height: 8),
@@ -329,7 +335,7 @@ class HomePage extends GetView<HomeController> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
-                'Popular',
+                'Products',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -337,7 +343,7 @@ class HomePage extends GetView<HomeController> {
                 ),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () => Get.toNamed(AppRoutes.productList),
                 child: const Text(
                   'View All',
                   style: TextStyle(
@@ -441,52 +447,6 @@ class HomePage extends GetView<HomeController> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildBottomNavigationBar() {
-    final RxInt selectedIndex = 0.obs;
-
-    return Obx(
-      () => BottomNavigationBar(
-        currentIndex: selectedIndex.value,
-        onTap: (index) {
-          selectedIndex.value = index;
-          switch (index) {
-            case 0:
-              // Already on home
-              break;
-            case 1:
-              Get.toNamed(AppRoutes.myOrders);
-              break;
-            case 2:
-              // Wishlist (placeholder)
-              Get.snackbar('Info', 'Wishlist coming soon');
-              break;
-            case 3:
-              Get.toNamed(AppRoutes.profile);
-              break;
-          }
-        },
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: AppColors.primary,
-        unselectedItemColor: AppColors.grey,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_bag),
-            label: 'My Order',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Wishlist',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-        ],
       ),
     );
   }

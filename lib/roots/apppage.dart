@@ -9,14 +9,15 @@ import 'package:mechine_test/controller/profile_controller.dart';
 import 'package:mechine_test/controller/splash_controller.dart';
 import 'package:mechine_test/roots/approot.dart';
 import 'package:mechine_test/view/cart_screen.dart';
+import 'package:mechine_test/view/category_product_screen.dart';
 import 'package:mechine_test/view/checkout_screen.dart';
-import 'package:mechine_test/view/home_screen.dart';
 import 'package:mechine_test/view/login_screen.dart';
-import 'package:mechine_test/view/myorder_screen.dart';
 import 'package:mechine_test/view/productdetails_screen.dart';
-import 'package:mechine_test/view/profile_screen.dart';
+import 'package:mechine_test/view/productlist_screen.dart';
+import 'package:mechine_test/view/search_screen.dart';
 import 'package:mechine_test/view/signup_screen.dart';
 import 'package:mechine_test/view/splash_screen.dart';
+import 'package:mechine_test/widgets/navigation.dart';
 import 'package:mechine_test/widgets/ordersuccess_screen.dart';
 
 class AppPages {
@@ -43,11 +44,14 @@ class AppPages {
       }),
     ),
     GetPage(
-      name: AppRoutes.home,
-      page: () => const HomePage(),
+      name: AppRoutes.main,
+      page: () => const MainNavigationScreen(),
       binding: BindingsBuilder(() {
+        Get.put(MainNavigationController());
         Get.put(HomeController());
         Get.put(CartController());
+        Get.put(OrderController());
+        Get.put(ProfileController());
       }),
     ),
     GetPage(
@@ -75,26 +79,10 @@ class AppPages {
     ),
     GetPage(name: AppRoutes.orderSuccess, page: () => const OrderSuccessPage()),
     GetPage(
-      name: AppRoutes.myOrders,
-      page: () => const MyOrdersPage(),
-      binding: BindingsBuilder(() {
-        Get.put(OrderController());
-      }),
+      name: AppRoutes.categoryProducts,
+      page: () => const CategoryProductsScreen(),
     ),
-    GetPage(
-      name: AppRoutes.profile,
-      page: () => const ProfilePage(),
-      binding: BindingsBuilder(() {
-        Get.put(ProfileController());
-      }),
-    ),
-    // GetPage(
-    //   name: AppRoutes.categoryProducts,
-    //   page: () => const CategoryProductsPage(),
-    // ),
-    // GetPage(
-    //   name: AppRoutes.search,
-    //   page: () => const SearchPage(),
-    // ),
+    GetPage(name: AppRoutes.productList, page: () => const ProductListScreen()),
+    GetPage(name: AppRoutes.search, page: () => const SearchScreen()),
   ];
 }

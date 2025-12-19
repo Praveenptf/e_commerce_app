@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mechine_test/models/cart_models.dart';
 import 'package:mechine_test/models/product_models.dart';
@@ -13,10 +14,27 @@ class CartController extends GetxController {
   }
 
   void loadCart() {
-    cartItems.value = StorageService.getCart();
+    final user = StorageService.getCurrentUser();
+    if (user != null) {
+      cartItems.value = StorageService.getUserCart(user.id);
+    } else {
+      cartItems.clear();
+    }
   }
 
   void addToCart(Product product) {
+    final user = StorageService.getCurrentUser();
+    if (user == null) {
+      Get.snackbar(
+        'Error',
+        'Please login to add items to cart',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
     final existingIndex = cartItems.indexWhere(
       (item) => item.product.id == product.id,
     );
@@ -32,6 +50,8 @@ class CartController extends GetxController {
     Get.snackbar(
       'Success',
       'Item added to cart',
+      backgroundColor: Colors.green,
+      colorText: Colors.white,
       snackPosition: SnackPosition.BOTTOM,
     );
   }
@@ -81,17 +101,25 @@ class CartController extends GetxController {
     Get.snackbar(
       'Removed',
       'Item removed from cart',
+      backgroundColor: Colors.orange,
+      colorText: Colors.white,
       snackPosition: SnackPosition.BOTTOM,
     );
   }
 
   void clearCart() {
-    cartItems.clear();
-    StorageService.clearCart();
+    final user = StorageService.getCurrentUser();
+    if (user != null) {
+      cartItems.clear();
+      StorageService.clearUserCart(user.id);
+    }
   }
 
   void saveCart() {
-    StorageService.saveCart(cartItems);
+    final user = StorageService.getCurrentUser();
+    if (user != null) {
+      StorageService.saveUserCart(user.id, cartItems);
+    }
   }
 
   double get subtotal {

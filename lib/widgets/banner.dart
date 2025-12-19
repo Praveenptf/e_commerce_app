@@ -5,14 +5,12 @@ import 'package:mechine_test/controller/home_screen_controller.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:animate_do/animate_do.dart';
 
-/// ✅ MODEL
 class OfferBanner {
   final String imagePath;
 
   OfferBanner({required this.imagePath});
 }
 
-/// ✅ WIDGET
 class CarouselBanner extends StatefulWidget {
   final HomeController homeController;
 

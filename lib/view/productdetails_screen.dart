@@ -24,7 +24,6 @@ class ProductDetailsPage extends GetView<ProductController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Product Image
             Container(
               height: 300,
               width: double.infinity,
@@ -44,7 +43,6 @@ class ProductDetailsPage extends GetView<ProductController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Category
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
@@ -66,7 +64,6 @@ class ProductDetailsPage extends GetView<ProductController> {
 
                   const SizedBox(height: 16),
 
-                  // Title
                   Text(
                     product.title,
                     style: const TextStyle(
@@ -78,7 +75,6 @@ class ProductDetailsPage extends GetView<ProductController> {
 
                   const SizedBox(height: 16),
 
-                  // Rating
                   Row(
                     children: [
                       Icon(Icons.star, color: Colors.amber, size: 20),
@@ -95,7 +91,6 @@ class ProductDetailsPage extends GetView<ProductController> {
 
                   const SizedBox(height: 24),
 
-                  // Price
                   Row(
                     children: [
                       Text(
@@ -120,7 +115,6 @@ class ProductDetailsPage extends GetView<ProductController> {
 
                   const SizedBox(height: 24),
 
-                  // Description
                   const Text(
                     'Description',
                     style: TextStyle(
@@ -158,17 +152,50 @@ class ProductDetailsPage extends GetView<ProductController> {
             ),
           ],
         ),
-        child: ElevatedButton(
-          onPressed: () {
-            cartController.addToCart(product);
-          },
-          style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-          ),
-          child: const Text(
-            'Add to Cart',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
+        child: Row(
+          children: [
+            Expanded(
+              child: OutlinedButton(
+                onPressed: () {
+                  cartController.addToCart(product);
+                },
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  side: BorderSide(color: AppColors.primary, width: 2),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: Text(
+                  'Add to Cart',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primary,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () {
+                  Get.toNamed('/checkout', arguments: product);
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: const Text(
+                  'Buy Now',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

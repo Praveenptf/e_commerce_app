@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:mechine_test/app_theme/appcolor.dart';
 import 'package:mechine_test/roots/approot.dart';
 
+import 'package:mechine_test/widgets/navigation.dart';
+
 class OrderSuccessPage extends StatelessWidget {
   const OrderSuccessPage({super.key});
 
@@ -22,7 +24,11 @@ class OrderSuccessPage extends StatelessWidget {
                   color: Colors.green.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.check_circle, size: 100, color: Colors.green),
+                child: const Icon(
+                  Icons.check_circle,
+                  size: 100,
+                  color: Colors.green,
+                ),
               ),
               const SizedBox(height: 32),
               const Text(
@@ -35,15 +41,24 @@ class OrderSuccessPage extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
-              Text(
+              const Text(
                 'Thank you for your order.\nWe will deliver it soon.',
                 style: TextStyle(fontSize: 16, color: AppColors.textSecondary),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 48),
               ElevatedButton(
-                onPressed: () => Get.offAllNamed(AppRoutes.myOrders),
+                onPressed: () {
+                  Get.offAllNamed(AppRoutes.main);
+
+                  Future.delayed(const Duration(milliseconds: 100), () {
+                    final controller = Get.find<MainNavigationController>();
+                    controller.changeTabIndex(1);
+                  });
+                },
                 style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 48,
                     vertical: 16,
@@ -56,7 +71,9 @@ class OrderSuccessPage extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               TextButton(
-                onPressed: () => Get.offAllNamed(AppRoutes.home),
+                onPressed: () {
+                  Get.offAllNamed(AppRoutes.main);
+                },
                 child: const Text(
                   'Continue Shopping',
                   style: TextStyle(fontSize: 16, color: AppColors.primary),

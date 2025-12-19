@@ -39,6 +39,13 @@ class SignupPage extends GetView<AuthController> {
                 decoration: BoxDecoration(
                   color: AppColors.white,
                   borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.grey.withOpacity(0.25),
+                      blurRadius: 2,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -54,8 +61,15 @@ class SignupPage extends GetView<AuthController> {
                     const SizedBox(height: 8),
                     TextField(
                       controller: controller.nameController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         hintText: 'Enter your name',
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: AppColors.grey,
+                            width: 1.2,
+                          ),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -71,8 +85,15 @@ class SignupPage extends GetView<AuthController> {
                     TextField(
                       controller: controller.emailController,
                       keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         hintText: 'Enter your email',
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: AppColors.grey, // normal border color
+                            width: 1.2,
+                          ),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -91,6 +112,13 @@ class SignupPage extends GetView<AuthController> {
                         obscureText: controller.obscurePassword.value,
                         decoration: InputDecoration(
                           hintText: 'Enter your password',
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: AppColors.grey,
+                              width: 1.2,
+                            ),
+                          ),
                           suffixIcon: IconButton(
                             icon: Icon(
                               controller.obscurePassword.value
@@ -119,6 +147,13 @@ class SignupPage extends GetView<AuthController> {
                         obscureText: controller.obscureConfirmPassword.value,
                         decoration: InputDecoration(
                           hintText: 'Confirm your password',
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: AppColors.grey, // normal border color
+                              width: 1.2,
+                            ),
+                          ),
                           suffixIcon: IconButton(
                             icon: Icon(
                               controller.obscureConfirmPassword.value
@@ -164,7 +199,7 @@ class SignupPage extends GetView<AuthController> {
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

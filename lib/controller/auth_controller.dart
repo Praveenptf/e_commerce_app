@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mechine_test/controller/cart_controller.dart';
 import 'package:mechine_test/models/user_models.dart';
+import 'package:mechine_test/roots/approot.dart';
 import 'package:mechine_test/service/api_service.dart';
 import 'package:mechine_test/view/login_screen.dart';
 
 class AuthController extends GetxController {
-  // Text Controllers
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final nameController = TextEditingController();
   final confirmPasswordController = TextEditingController();
-
-  // Observable variables
   final obscurePassword = true.obs;
   final obscureConfirmPassword = true.obs;
   final isLoading = false.obs;
@@ -23,14 +22,12 @@ class AuthController extends GetxController {
     checkLoginStatus();
   }
 
-  // Check if user is already logged in
   void checkLoginStatus() {
     if (AuthService.isLoggedIn()) {
       currentUser.value = AuthService.getCurrentUser();
     }
   }
 
-  // Toggle password visibility
   void togglePasswordVisibility() {
     obscurePassword.value = !obscurePassword.value;
   }
@@ -39,9 +36,7 @@ class AuthController extends GetxController {
     obscureConfirmPassword.value = !obscureConfirmPassword.value;
   }
 
-  // Login method
   Future<void> login() async {
-    // Validate inputs
     if (emailController.text.trim().isEmpty) {
       Get.snackbar(
         'Error',
@@ -86,6 +81,13 @@ class AuthController extends GetxController {
       if (result['success']) {
         currentUser.value = result['user'];
 
+        try {
+          final cartController = Get.find<CartController>();
+          cartController.loadCart();
+        } catch (e) {
+          debugPrint('CartController not found during login: ${e.toString()}');
+        }
+
         Get.snackbar(
           'Success',
           result['message'],
@@ -93,12 +95,9 @@ class AuthController extends GetxController {
           colorText: Colors.white,
           snackPosition: SnackPosition.BOTTOM,
         );
-
-        // Clear fields
         clearFields();
 
-        // Navigate to home
-        Get.offAllNamed('/home');
+        Get.offAllNamed(AppRoutes.main);
       } else {
         Get.snackbar(
           'Error',
@@ -121,9 +120,7 @@ class AuthController extends GetxController {
     }
   }
 
-  // Signup method
   Future<void> signup() async {
-    // Validate inputs
     if (nameController.text.trim().isEmpty) {
       Get.snackbar(
         'Error',
@@ -219,11 +216,8 @@ class AuthController extends GetxController {
           snackPosition: SnackPosition.BOTTOM,
         );
 
-        // Clear fields
         clearFields();
-
-        // Navigate back to login
-        Get.back();
+        Get.offNamed('/login');
       } else {
         Get.snackbar(
           'Error',
@@ -246,11 +240,18 @@ class AuthController extends GetxController {
     }
   }
 
-  // Logout method
   Future<void> logout() async {
     try {
       await AuthService.logout();
       currentUser.value = null;
+
+      try {
+        final cartController = Get.find<CartController>();
+        cartController.loadCart();
+      } catch (e) {
+        debugPrint('CartController not found during logout: ${e.toString()}');
+      }
+
       clearFields();
       Get.to(() => LoginPage());
 
@@ -272,7 +273,6 @@ class AuthController extends GetxController {
     }
   }
 
-  // Clear all text fields
   void clearFields() {
     nameController.clear();
     emailController.clear();

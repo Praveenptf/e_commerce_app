@@ -15,7 +15,7 @@ class CartPage extends GetView<CartController> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         title: const Text('Your Cart'),
-        backgroundColor: AppColors.white,
+        backgroundColor: AppColors.primary,
         foregroundColor: AppColors.textPrimary,
         elevation: 0,
       ),
@@ -39,9 +39,29 @@ class CartPage extends GetView<CartController> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: () => Get.back(),
-                  child: const Text('Continue Shopping'),
+                GestureDetector(
+                  onTap: () => Get.back(),
+                  child: Container(
+                    height: 40,
+                    width: 140,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.25),
+                          blurRadius: 2,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: const Text(
+                        'Continue Shopping',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -201,8 +221,10 @@ class CartPage extends GetView<CartController> {
           TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
           TextButton(
             onPressed: () {
+              if (Get.isDialogOpen == true) {
+                Get.back();
+              }
               controller.removeFromCart(productId);
-              Get.back();
             },
             child: const Text('Remove', style: TextStyle(color: Colors.red)),
           ),

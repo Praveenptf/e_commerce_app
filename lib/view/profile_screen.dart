@@ -24,7 +24,6 @@ class ProfilePage extends GetView<ProfileController> {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              // Profile Picture
               CircleAvatar(
                 radius: 50,
                 backgroundColor: AppColors.primary,
@@ -52,7 +51,6 @@ class ProfilePage extends GetView<ProfileController> {
               ),
               const SizedBox(height: 32),
 
-              // Profile Options
               _buildProfileOption(
                 icon: Icons.person,
                 title: 'Edit Profile',
@@ -76,7 +74,7 @@ class ProfilePage extends GetView<ProfileController> {
               _buildProfileOption(
                 icon: Icons.info,
                 title: 'About',
-                onTap: () => Get.snackbar('Info', 'Lapma v1.0.0'),
+                onTap: () => Get.snackbar('Info', 'E-Commerce v1.0.0'),
               ),
               const SizedBox(height: 16),
               _buildProfileOption(
@@ -103,6 +101,13 @@ class ProfilePage extends GetView<ProfileController> {
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.25),
+            blurRadius: 1,
+            offset: const Offset(0, 1),
+          ),
+        ],
       ),
       child: ListTile(
         leading: Icon(

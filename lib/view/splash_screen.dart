@@ -17,7 +17,7 @@ class SplashPage extends GetView<SplashController> {
             Icon(Icons.shopping_bag, size: 100, color: AppColors.white),
             const SizedBox(height: 24),
             Text(
-              'Lapma',
+              'E-Commerce',
               style: TextStyle(
                 fontSize: 48,
                 fontWeight: FontWeight.bold,

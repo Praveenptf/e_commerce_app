@@ -9,31 +9,26 @@ import 'package:mechine_test/models/user_models.dart';
 class StorageService {
   static final GetStorage _box = GetStorage();
 
-  // Keys
   static const String _userKey = 'current_user';
   static const String _usersKey = 'users';
   static const String _cartKey = 'cart_items';
   static const String _ordersKey = 'orders';
   static const String _isLoggedInKey = 'is_logged_in';
 
-  // Initialize GetStorage
   static Future<void> init() async {
     await GetStorage.init();
   }
 
-  // Hash password using SHA-256
   static String _hashPassword(String password) {
     final bytes = utf8.encode(password);
     final hash = sha256.convert(bytes);
     return hash.toString();
   }
 
-  // User Authentication
   static Future<void> saveUser(User user) async {
     await _box.write(_userKey, user.toJson());
     await _box.write(_isLoggedInKey, true);
 
-    // Save to users list
     List<dynamic> users = _box.read(_usersKey) ?? [];
     final existingIndex = users.indexWhere((u) => u['email'] == user.email);
     if (existingIndex != -1) {
@@ -73,7 +68,6 @@ class StorageService {
     }
   }
 
-  // Check password with hashing
   static bool checkPassword(String email, String password) {
     List<dynamic> users = _box.read(_usersKey) ?? [];
     try {
@@ -87,7 +81,6 @@ class StorageService {
     }
   }
 
-  // Register user with password hashing
   static Future<bool> registerUser(
     String name,
     String email,
@@ -95,12 +88,10 @@ class StorageService {
   ) async {
     List<dynamic> users = _box.read(_usersKey) ?? [];
 
-    // Check if user already exists
     if (users.any((u) => u['email'] == email.toLowerCase())) {
       return false;
     }
 
-    // Hash password before storing
     final hashedPassword = _hashPassword(password);
 
     final user = User(
@@ -116,7 +107,6 @@ class StorageService {
     return true;
   }
 
-  // Update user login time
   static Future<void> updateUserLoginTime(String email) async {
     List<dynamic> users = _box.read(_usersKey) ?? [];
     final userIndex = users.indexWhere(
@@ -133,7 +123,6 @@ class StorageService {
     }
   }
 
-  // Update user profile
   static Future<void> updateUser(User user) async {
     List<dynamic> users = _box.read(_usersKey) ?? [];
     final userIndex = users.indexWhere((u) => u['email'] == user.email);
@@ -142,7 +131,6 @@ class StorageService {
       users[userIndex] = user.toJson();
       await _box.write(_usersKey, users);
 
-      // Update current user if it's the same
       final currentUser = getCurrentUser();
       if (currentUser?.email == user.email) {
         await _box.write(_userKey, user.toJson());
@@ -150,22 +138,56 @@ class StorageService {
     }
   }
 
-  // Cart Management
+  static Future<void> saveUserCart(String userId, List<CartItem> items) async {
+    List<dynamic> allCarts = _box.read(_cartKey) ?? [];
+
+    allCarts.removeWhere((cart) => cart['userId'] == userId);
+
+    for (var item in items) {
+      final cartData = item.toJson();
+      cartData['userId'] = userId;
+      allCarts.add(cartData);
+    }
+
+    await _box.write(_cartKey, allCarts);
+  }
+
+  static List<CartItem> getUserCart(String userId) {
+    final List<dynamic> allCarts = _box.read(_cartKey) ?? [];
+    final userCarts = allCarts
+        .where((cart) => cart['userId'] == userId)
+        .toList();
+    return userCarts.map((item) => CartItem.fromJson(item)).toList();
+  }
+
+  static Future<void> clearUserCart(String userId) async {
+    List<dynamic> allCarts = _box.read(_cartKey) ?? [];
+    allCarts.removeWhere((cart) => cart['userId'] == userId);
+    await _box.write(_cartKey, allCarts);
+  }
+
   static Future<void> saveCart(List<CartItem> items) async {
-    final jsonItems = items.map((item) => item.toJson()).toList();
-    await _box.write(_cartKey, jsonItems);
+    final user = getCurrentUser();
+    if (user != null) {
+      await saveUserCart(user.id, items);
+    }
   }
 
   static List<CartItem> getCart() {
-    final List<dynamic> items = _box.read(_cartKey) ?? [];
-    return items.map((item) => CartItem.fromJson(item)).toList();
+    final user = getCurrentUser();
+    if (user != null) {
+      return getUserCart(user.id);
+    }
+    return [];
   }
 
   static Future<void> clearCart() async {
-    await _box.remove(_cartKey);
+    final user = getCurrentUser();
+    if (user != null) {
+      await clearUserCart(user.id);
+    }
   }
 
-  // Order Management
   static Future<void> saveOrder(Order order) async {
     List<dynamic> orders = _box.read(_ordersKey) ?? [];
     orders.insert(0, order.toJson());
@@ -185,12 +207,10 @@ class StorageService {
         .toList();
   }
 
-  // Clear all data (for testing or logout)
   static Future<void> clearAll() async {
     await _box.erase();
   }
 
-  // Get all users (for admin purposes)
   static List<User> getAllUsers() {
     final List<dynamic> users = _box.read(_usersKey) ?? [];
     return users.map((user) => User.fromJson(user)).toList();

@@ -9,11 +9,9 @@ class HomeController extends GetxController {
   final categories = <String>[].obs;
   final isLoading = false.obs;
 
-  // Banner state
   final isLoadingOffers = true.obs;
   final offerBanners = <OfferBanner>[].obs;
 
-  // Countdown timer
   final countdownDays = 0.obs;
   final countdownHours = 0.obs;
   final countdownMinutes = 0.obs;
@@ -27,10 +25,9 @@ class HomeController extends GetxController {
     fetchProducts();
     fetchCategories();
     startCountdown();
-    loadOffers(); // 👈 load banners here
+    loadOffers();
   }
 
-  // ✅ LOAD ASSET BANNERS
   void loadOffers() async {
     try {
       isLoadingOffers.value = true;
@@ -38,7 +35,7 @@ class HomeController extends GetxController {
       offerBanners.assignAll([
         OfferBanner(imagePath: 'assets/1.jpg'),
         OfferBanner(imagePath: 'assets/2.jpg'),
-        OfferBanner(imagePath: 'assets/3.avif'),
+        OfferBanner(imagePath: 'assets/4.jpg'),
       ]);
     } finally {
       isLoadingOffers.value = false;
