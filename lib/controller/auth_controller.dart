@@ -253,7 +253,7 @@ class AuthController extends GetxController {
       }
 
       clearFields();
-      Get.to(() => LoginPage());
+      Get.offAll(() => LoginPage());
 
       Get.snackbar(
         'Success',
