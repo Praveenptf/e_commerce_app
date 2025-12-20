@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:get/get.dart';
 import 'package:mechine_test/models/product_models.dart';
 import 'package:mechine_test/service/api_service.dart';
@@ -24,7 +26,7 @@ class SearchController extends GetxController {
       allProducts.value = await ApiService.getProducts();
       searchResults.value = allProducts;
     } catch (e) {
-      print('Error fetching products: $e');
+      //
     } finally {
       isLoading.value = false;
     }

@@ -124,7 +124,6 @@ class ApiService {
         throw Exception('Failed to load products');
       }
     } catch (e) {
-      print('Error fetching products: $e');
       return [];
     }
   }
@@ -142,7 +141,6 @@ class ApiService {
         throw Exception('Failed to load categories');
       }
     } catch (e) {
-      print('Error fetching categories: $e');
       return [];
     }
   }
@@ -160,7 +158,6 @@ class ApiService {
         throw Exception('Failed to load products by category');
       }
     } catch (e) {
-      print('Error fetching products by category: $e');
       return [];
     }
   }
@@ -176,7 +173,6 @@ class ApiService {
         throw Exception('Failed to load product');
       }
     } catch (e) {
-      print('Error fetching product: $e');
       return null;
     }
   }

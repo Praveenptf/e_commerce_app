@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -28,7 +30,7 @@ class HomePage extends GetView<HomeController> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(
-                    'E-Commerce',
+                    'E-shop',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,

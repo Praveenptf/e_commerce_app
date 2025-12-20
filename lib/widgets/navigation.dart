@@ -12,11 +12,6 @@ class MainNavigationController extends GetxController {
   void changeTabIndex(int index) {
     selectedIndex.value = index;
   }
-
-  @override
-  void onClose() {
-    super.onClose();
-  }
 }
 
 class MainNavigationScreen extends GetView<MainNavigationController> {
